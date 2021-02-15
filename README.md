@@ -250,3 +250,8 @@ hw.snd.maxautovchans=4
    ```bash
    sudo apt-get install fswebcam
    ```
+
+### 有趣的项目
+- 终端仪表盘 https://github.com/yaronn/blessed-contrib
+- quark上运行: sudo killall cmatrix && sudo ttyecho -n /dev/tty1 cmatrix -abx -C cyan
+
