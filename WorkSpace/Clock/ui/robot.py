@@ -131,7 +131,7 @@ class RobotUI(BaseUI):
     def is_showing(self):
         return (pygame.time.get_ticks() - self.wakeUpTime) < self.showDuration
 
-    def onKeyRelease(self, isLongPress, pushCount, longPressSeconds):
+    def onKeyRelease(self, isLongPress, pushCount, longPressSeconds, keyIndex):
         if not isLongPress and pushCount == 1:
             self.wakeUpTime = pygame.time.get_ticks()
             if self.message is not None:

@@ -31,8 +31,9 @@ class MenuUI(BaseUI):
         IconAction('wukong', 'wukong.png', '孙悟空'),
         IconAction('camera', 'camera.png', '相机'),
         IconAction('album', 'img.png', '相册'),
+        IconAction('video', 'disk.png', '视频'),
         # IconAction('statistics', 'statisticalchart.png', '陀螺仪'),
-        # IconAction('calendar', 'calendar.png', '3D界面'),
+        IconAction('calendar', 'calendar.png', '3D界面'),
         # IconAction('maillist', 'maillist.png'),
         IconAction('splash', 'computer.png', '启动画面'),
         IconAction('set', 'set.png', '设置'),
@@ -106,14 +107,17 @@ class MenuUI(BaseUI):
         else:
             self.target_index = self.target_index + 1
 
-    def onKeyRelease(self, isLongPress, pushCount, longPressSeconds):
+    def onKeyRelease(self, isLongPress, pushCount, longPressSeconds, keyIndex):
         if not isLongPress and pushCount == 1:
             if self.animating:
                 return True
-            self.moveToRight()
+            if keyIndex == 1:
+                self.moveToLeft()
+            else:
+                self.moveToRight()
             return True
         if isLongPress:
-            if longPressSeconds == 2:
+            if longPressSeconds == 2 and keyIndex == 0:
                 # print('current_index', self.current_index, ', animating', self.animating)
                 if self.animating:
                     return True
@@ -121,7 +125,7 @@ class MenuUI(BaseUI):
                 return True
         return False
 
-    def onKeyPush(self, pushCount):
+    def onKeyPush(self, pushCount, keyIndex):
         pass
 
     def onMouseUp(self, event):
@@ -165,6 +169,10 @@ class MenuUI(BaseUI):
         if self.ICONS[self.current_index].name == 'album':
             from .album import AlbumUI
             UIManager().get(AlbumUI.__name__).show()
+
+        if self.ICONS[self.current_index].name == 'video':
+            from .video import VideoUI
+            UIManager().get(VideoUI.__name__).show()
 
         # if self.ICONS[self.current_index].name == 'statistics':
         #     from .mpu6050 import MPU6050UI

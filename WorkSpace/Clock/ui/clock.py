@@ -44,7 +44,8 @@ class ClockUI(BaseUI):
 
     months = ['January', 'February', 'March', 'April', 'May', 
     'June', 'July', 'August', 'September', 'October', 'November', 'December']
-    days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ]
+    # days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ]
+    days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日' ]
 
     def rx(self):
         ifstat = open('/proc/net/dev').readlines()
@@ -71,7 +72,7 @@ class ClockUI(BaseUI):
     def on_hidden(self):
         pass
 
-    def onKeyRelease(self, isLongPress, pushCount, longPressSeconds):
+    def onKeyRelease(self, isLongPress, pushCount, longPressSeconds, keyIndex):
         if not isLongPress and pushCount == 1:
             self.sysInfoShowType.next()
             self.timeShowType.next()
@@ -114,12 +115,20 @@ class ClockUI(BaseUI):
             rxstat_o = list(self.NET_STATS)
             self.rx()
             self.tx()
-            RX = float(self.NET_STATS[0])
-            RX_O = rxstat_o[0]
-            TX = float(self.NET_STATS[1])
-            TX_O = rxstat_o[1]
-            self.RX_RATE = round((RX - RX_O)/1024/1024,3)
-            self.TX_RATE = round((TX - TX_O)/1024/1024,3)
+            if len(self.NET_STATS) > 0:
+                RX = float(self.NET_STATS[0])
+                RX_O = rxstat_o[0]
+                TX = float(self.NET_STATS[1])
+                TX_O = rxstat_o[1]
+                self.RX_RATE = round((RX - RX_O)/1024/1024,3)
+                self.TX_RATE = round((TX - TX_O)/1024/1024,3)
+            else:
+                RX = 0.0
+                RX_O = 0
+                TX = 0.0
+                TX_O = 0
+                self.RX_RATE = 0
+                self.TX_RATE = 0
 
             self.memInfo = get_mem_info()
             self.dskInfo = get_disk_info()
@@ -151,12 +160,8 @@ class ClockUI(BaseUI):
             shour = '0' + shour
         timeStr = shour + ':' + minute
         # timeText = largeFont.render(timeStr, True, color_green)
-        timeText = self.get_cache('timeText_{}'.format(timeStr), lambda: largeFont.render(timeStr, True, color_green))
         secondText = self.get_cache('secondText_{}'.format(second), lambda: middleFont.render(second, True, color_green))
-        monthText = self.get_cache('monthText_{}'.format(year + '-' + month + '-' + date), lambda: smallFont.render(year + '-' + month + '-' + date, True, color_green))
-        yearText = self.get_cache('yearText_{}'.format(year), lambda: smallFont.render(year, True, color_green))
         amText = self.get_cache('amText_{}'.format(am), lambda: middleFont.render(am, True, color_green))
-        dayText = self.get_cache('dayText_{}'.format(day), lambda: smallFont.render(day, True, color_green))
 
         if self.sysInfoShowType.current() == 0:
             sysText = self.get_cache('sysText_{}'.format(self.cputemp), lambda: smallFont.render(self.cputemp, True, color_white))
@@ -174,23 +179,49 @@ class ClockUI(BaseUI):
 
         ip = self.hostIp
         ipText = self.get_cache('ip_{}'.format(ip), lambda: miniFont.render(ip, True, color_white))
-        
-        surface.blit(sysText, (10,0))
-        surface.blit(sysUseText, (window_width - sysUseText.get_width() - 2,0))
-        surface.blit(timeText, (4,16))
-        surface.blit(secondText, (190, 52))
-        surface.blit(monthText, (15,86))
-        # surface.blit(yearText, (145,120))
-        if self.timeShowType.current() == 0:
-            surface.blit(amText,(190,22))
-        surface.blit(dayText,(170,86))
 
-        if self.netShowType.current() == 1:
-            surface.blit(netSpeedInText, (window_width - netSpeedInText.get_width(), 112))
-            surface.blit(netSpeedOutText, (window_width / 2 - netSpeedOutText.get_width(), 112))
+        if window_width == 320:
+            timeText = self.get_cache('timeText_{}'.format(timeStr), lambda: getAppFont(120, 'DIGIT').render(timeStr, True, color_green)) # largeFont
+            # yearText = self.get_cache('yearText_{}'.format(year), lambda: getAppFont(50, 'DIGIT').render(year, True, color_green))
+            dayText = self.get_cache('dayText_{}'.format(day), lambda: getAppFont(36, 'PingFang').render(day, True, color_green))
+            monthText = self.get_cache('monthText_{}'.format(year + '-' + month + '-' + date), lambda: getAppFont(46, 'DIGIT').render(year + '-' + month + '-' + date, True, color_green))
+            surface.blit(sysText, (10,0))
+            surface.blit(sysUseText, (window_width - sysUseText.get_width() - 2,0))
+            surface.blit(timeText, (6, int(window_height * (16 / 135))))
+            surface.blit(secondText, (window_width - secondText.get_width(), int(window_height * (52 / 135))))
+            surface.blit(monthText, (15, int(window_height * (86 / 135))))
+            # surface.blit(yearText, (145,120))
+            if self.timeShowType.current() == 0:
+                surface.blit(amText,(window_width - amText.get_width(), int(window_height * (22 / 135))))
+            surface.blit(dayText,(window_width - dayText.get_width(), int(window_height * (86 / 135))))
+
+            if self.netShowType.current() == 1:
+                surface.blit(netSpeedInText, (window_width - netSpeedInText.get_width(), window_height - 23))
+                surface.blit(netSpeedOutText, (window_width / 2 - netSpeedOutText.get_width(), window_height - 23))
+            else:
+                surface.blit(ipText,(10, window_height - 23))
+                surface.blit(netSpeedInText, (window_width - netSpeedInText.get_width(), window_height - 23))
         else:
-            surface.blit(ipText,(10, 112))
-            surface.blit(netSpeedInText, (window_width - netSpeedInText.get_width(), 112))
+            timeText = self.get_cache('timeText_{}'.format(timeStr), lambda: getAppFont(82, 'DIGIT').render(timeStr, True, color_green)) # largeFont
+            # yearText = self.get_cache('yearText_{}'.format(year), lambda: smallFont.render(year, True, color_green))
+            dayText = self.get_cache('dayText_{}'.format(day), lambda: getAppFont(24, 'PingFang').render(day, True, color_green))
+            monthText = self.get_cache('monthText_{}'.format(year + '-' + month + '-' + date), lambda: smallFont.render(year + '-' + month + '-' + date, True, color_green))
+            surface.blit(sysText, (10,0))
+            surface.blit(sysUseText, (window_width - sysUseText.get_width() - 2,0))
+            surface.blit(timeText, (4,16))
+            surface.blit(secondText, (190, 52))
+            surface.blit(monthText, (15,86))
+            # surface.blit(yearText, (145,120))
+            if self.timeShowType.current() == 0:
+                surface.blit(amText,(190,22))
+            surface.blit(dayText,(170,86))
+
+            if self.netShowType.current() == 1:
+                surface.blit(netSpeedInText, (window_width - netSpeedInText.get_width(), window_height - 23))
+                surface.blit(netSpeedOutText, (window_width / 2 - netSpeedOutText.get_width(), window_height - 23))
+            else:
+                surface.blit(ipText,(10, window_height - 23))
+                surface.blit(netSpeedInText, (window_width - netSpeedInText.get_width(), window_height - 23))
         
         self.prevSecondIntValue = secondIntValue
         # welcomeTxt = bigFont.render(ClockUI.__name__, True, color_white)

@@ -29,7 +29,7 @@ class LaunchersUI(BaseUI):
     def on_hidden(self):
         pass
 
-    def onKeyRelease(self, isLongPress, pushCount, longPressSeconds):
+    def onKeyRelease(self, isLongPress, pushCount, longPressSeconds, keyIndex):
         if not isLongPress and pushCount == 1:
             if (self.target_index + 1) >= len(self.images):
                 self.target_index = 0

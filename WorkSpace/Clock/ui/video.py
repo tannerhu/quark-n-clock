@@ -9,18 +9,19 @@ from ui.theme import *
 from utils.GIFImage import GIFImage
 from system.config import Config
 
-logger = logging.getLogger('ui.album')
+logger = logging.getLogger('ui.video')
 
-class AlbumUI(BaseUI):
+class VideoUI(BaseUI):
 
     showTick = 0
     current_img = None
+    current_filename = ''
     fileObjs = []
     target_index = 0
 
     def on_shown(self):
         target_index = 0
-        pic_path = Config().get('camera.dest_path', '/home/pi/Pictures/')
+        pic_path = Config().get('camera.video_path', '/home/pi/Videos/')
         if os.path.exists(pic_path) and os.path.isdir(pic_path):
             self.fileObjs = os.listdir(pic_path)
         if len(self.fileObjs) > 0 and target_index < len(self.fileObjs):
@@ -36,15 +37,20 @@ class AlbumUI(BaseUI):
             self.current_img = None
             return
         if os.path.isfile(path):
-            if path.lower().endswith('.png') or path.lower().endswith('.jpg') or path.lower().endswith('.jpeg') or path.lower().endswith('.bmp'):
-                self.current_img = pygame.transform.scale(pygame.image.load(path), UIManager().getWindowSize())
-            elif path.lower().endswith('.gif'):
-                self.current_img = GIFImage(path)
+            logger.info("path = {}".format(path))
+            if path.lower().endswith('.mp4'):
+                self.current_img = pygame.image.load(os.path.join(sys.path[0], 'images/icon_set2', 'mp4.png'))
+            elif path.lower().endswith('.avi') or path.lower().endswith('.mpg') or path.lower().endswith('.mpeg'):
+                # self.current_img = pygame.transform.scale(pygame.image.load(path), UIManager().getWindowSize())
+                self.current_img = pygame.image.load(os.path.join(sys.path[0], 'images/icon_set2', 'shipin.png'))
+            # elif path.lower().endswith('.gif'):
+            #     self.current_img = GIFImage(path)
             else:
                 self.current_img = pygame.image.load(os.path.join(sys.path[0], 'images/icon_set3', 'doc.png'))
         else:
             self.current_img = pygame.image.load(os.path.join(sys.path[0], 'images/icon_set3', 'folder.png'))
             pass
+        self.current_filename = os.path.basename(path)
 
     def onMouseUp(self, event):
         windowSize = UIManager().getWindowSize()
@@ -63,7 +69,7 @@ class AlbumUI(BaseUI):
                 self.target_index = 0
             else:
                 self.target_index = self.target_index + 1
-        pic_path = Config().get('camera.dest_path', '/home/pi/Pictures/')
+        pic_path = Config().get('camera.video_path', '/home/pi/Videos/')
         filepath = os.path.join(pic_path, self.fileObjs[self.target_index])
         self.loadFile(filepath)
         pass
@@ -84,7 +90,7 @@ class AlbumUI(BaseUI):
 
             
             if len(self.fileObjs) > 0 and self.target_index < len(self.fileObjs):
-                pic_path = Config().get('camera.dest_path', '/home/pi/Pictures/')
+                pic_path = Config().get('camera.video_path', '/home/pi/Videos/')
                 filepath = os.path.join(pic_path, self.fileObjs[self.target_index])
                 self.loadFile(filepath)
 
@@ -116,6 +122,9 @@ class AlbumUI(BaseUI):
                     surface.blit(self.current_img, (window_width / 2 - self.current_img.get_width() / 2, window_height / 2 - self.current_img.get_height() / 2))
                 else:
                     self.current_img.render(surface, (window_width / 2 - self.current_img.get_width() / 2, window_height / 2 - self.current_img.get_height() / 2))
+            if self.current_filename is not None:
+                nameTxt = zhMiniFont.render(self.current_filename, True, color_white)
+                surface.blit(nameTxt, (window_width / 2 - nameTxt.get_width() / 2, 10))
 
         page = '{}/{}'.format(self.target_index + 1, len(self.fileObjs))
         pageText = miniFont.render(page, True, color_green)
