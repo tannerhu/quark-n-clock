@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 from datetime import datetime
-import time
 import logging
 import logging.config
 import pygame
@@ -62,7 +61,7 @@ class ClockUI(BaseUI):
                 self.NET_STATS[1:] = [stat]
 
     def on_shown(self):
-        self.showTick = (time.time() * 1000)
+        self.showTick = pygame.time.get_ticks()
         self.cputemp = cputempf()
         self.rx()
         self.tx()
@@ -115,12 +114,20 @@ class ClockUI(BaseUI):
             rxstat_o = list(self.NET_STATS)
             self.rx()
             self.tx()
-            RX = float(self.NET_STATS[0])
-            RX_O = rxstat_o[0]
-            TX = float(self.NET_STATS[1])
-            TX_O = rxstat_o[1]
-            self.RX_RATE = round((RX - RX_O)/1024/1024,3)
-            self.TX_RATE = round((TX - TX_O)/1024/1024,3)
+            if len(self.NET_STATS) > 0:
+                RX = float(self.NET_STATS[0])
+                RX_O = rxstat_o[0]
+                TX = float(self.NET_STATS[1])
+                TX_O = rxstat_o[1]
+                self.RX_RATE = round((RX - RX_O)/1024/1024,3)
+                self.TX_RATE = round((TX - TX_O)/1024/1024,3)
+            else:
+                RX = 0.0
+                RX_O = 0
+                TX = 0.0
+                TX_O = 0
+                self.RX_RATE = 0
+                self.TX_RATE = 0
 
             self.memInfo = get_mem_info()
             self.dskInfo = get_disk_info()

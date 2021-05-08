@@ -31,7 +31,12 @@ logger.critical('critical log')
 ##############
 ### periphery init
 ##############
-gpio_key = GPIO("/dev/gpiochip1", 3, "in")
+# 以reset为左下
+# 左上 GPIO("/dev/gpiochip1", 4, "in")
+# 右上 
+# 右下 GPIO("/dev/gpiochip1", 3, "in")
+gpio_key = GPIO("/dev/gpiochip1", 3, "in") # GPIOKEY
+gpio2_key = GPIO("/dev/gpiochip1", 4, "in") # Recovery
 ledUser = LED("usr_led", True)
 
 ##############
@@ -194,6 +199,8 @@ def checkGPIOKey(onPush, onRelease, onLongPress):
     if gpio_key is None:
         return 0
     gpio_state = gpio_key.read()
+    gpio2_state = gpio2_key.read()
+    # logger.info('gpio2 state {}'.format(gpio2_state))
     if prev_gpio_state == -1:
         prev_gpio_state = gpio_state
         return 0
