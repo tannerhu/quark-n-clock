@@ -5,6 +5,8 @@ wiki: https://wiki.seeedstudio.com/cn/Quantum-Mini-Linux-Development-Kit/
 
 大神项目地址：https://github.com/peng-zhihui/Project-Quantum
 
+对应的外壳：https://gitee.com/coolflyreg163/quark-n-3d
+
 1. 启动网络
 http://wiki.friendlyarm.com/wiki/index.php/Use_NetworkManager_to_configure_network_settings
 
@@ -50,6 +52,47 @@ sudo nmcli c up [CONNECTION NAME | UUID] passwd-file /home/pi/.nmcli/passwd-wlan
 ```conf
 hw.snd.pcm0.vchans=4
 hw.snd.maxautovchans=4
+```
+
+9. 播放视频
+```bash
+sudo mplayer -vo fbdev2:/dev/fb1 -x 240 -y 135 -zoom /home/pi/Videos/BadApple.mp4
+```
+**视频最好转换到和屏幕一个分辨率，不然就会卡顿掉帧**
+
+10. 视频分辨率转换
+```
+ffmpeg -i /home/pi/Videos/BadApple.mp4 -strict -2 -s 240x134 /home/pi/Videos/BadApple_240x134.mp4
+```
+分辨率必须是2的倍数所以，所以不能是240x135，而是240x134
+
+11. 录音测试
+查看录音设备：
+```bash
+sudo arecord –l
+```
+录音和播放
+```bash
+sudo arecord -Dhw:2,0 -d 10 -f cd -r 44100 -c 2 -t wav test.wav
+sudo arecord -Dhw:2,0 -f cd -r 16000 -c 1 -t wav record.wav
+sudo aplay -Dhw:2,0 /home/pi/Music/test.wav
+```
+参数解析
+- -D 指定了录音设备，0,1 是card 0 device 1的意思，也就是TDM_Capture
+- -d 指定录音的时长，单位时秒
+- -f 指定录音格式，通过上面的信息知道只支持 cd cdr dat 
+- -r 指定了采样率，单位时Hz
+- -c 指定channel 个数
+- -t 指定生成的文件格式
+
+12. apt-get强制使用Ipv4
+```bash
+sudo apt-get -o Acquire::ForceIPv4=true update
+```
+永久解决办法：
+```note
+创建文件 /etc/apt/apt.conf.d/99force-ipv4
+加入代码: Acquire::ForceIPv4 "true";
 ```
 
 ### TF卡有系统时启动到emmc分区
@@ -142,12 +185,13 @@ hw.snd.maxautovchans=4
 7. 运行如下命令进行安装
    ```bash
    cd /home/pi/WorkSpace/Clock/
-   sudo python -m pip install -r requirements.txt
+   sudo python -m pip install --index http://mirrors.aliyun.com/pypi/simple/ --trusted-host mirrors.aliyun.com -r requirements.txt
    mkdir /home/pi/WorkSpace/Clock/logs
    sudo ln -s /home/pi/WorkSpace/Scripts/services/ui_clock.service /lib/systemd/system/
    sudo systemctl daemon-reload
    sudo systemctl enable ui_clock
    ```
+   ** ruamel.yaml 需要使用阿里云的镜像来安装，豆瓣的镜像里没有！ **
    **到达这一步，已经在重启后会自动启动。下面是手动命令**
 8. 命令提示：
    1. 启动 （手动启动后按Ctrl + C可脱离）
@@ -250,3 +294,7 @@ hw.snd.maxautovchans=4
    ```bash
    sudo apt-get install fswebcam
    ```
+
+#### 其他驱动
+- RTL8821CU（8811cu）： https://gitee.com/coolflyreg163/rtl8821cu  内有ko文件，quark-n可直接可使用
+- RTL8723DU：https://gitee.com/coolflyreg163/rtl8723du    内有ko文件，quark-n直接可使用
