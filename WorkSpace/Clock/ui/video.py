@@ -4,6 +4,7 @@ import os
 import sys
 import logging
 import logging.config
+import subprocess
 from ui.core import UIManager, BaseUI
 from ui.theme import *
 from utils.GIFImage import GIFImage
@@ -18,14 +19,20 @@ class VideoUI(BaseUI):
     current_filename = ''
     fileObjs = []
     target_index = 0
+    proc = None
+
+    def __init__(self, ui_index):
+        super().__init__(ui_index)
+        
+        self.proc = None
 
     def on_shown(self):
         target_index = 0
-        pic_path = Config().get('camera.video_path', '/home/pi/Videos/')
-        if os.path.exists(pic_path) and os.path.isdir(pic_path):
-            self.fileObjs = os.listdir(pic_path)
+        video_path = Config().get('camera.video_path', '/home/pi/Videos/')
+        if os.path.exists(video_path) and os.path.isdir(video_path):
+            self.fileObjs = os.listdir(video_path)
         if len(self.fileObjs) > 0 and target_index < len(self.fileObjs):
-            filepath = os.path.join(pic_path, self.fileObjs[target_index])
+            filepath = os.path.join(video_path, self.fileObjs[target_index])
             self.loadFile(filepath)
 
         self.target_index = target_index
@@ -69,66 +76,93 @@ class VideoUI(BaseUI):
                 self.target_index = 0
             else:
                 self.target_index = self.target_index + 1
-        pic_path = Config().get('camera.video_path', '/home/pi/Videos/')
-        filepath = os.path.join(pic_path, self.fileObjs[self.target_index])
+        video_path = Config().get('camera.video_path', '/home/pi/Videos/')
+        filepath = os.path.join(video_path, self.fileObjs[self.target_index])
         self.loadFile(filepath)
         pass
 
 
     def onKeyRelease(self, isLongPress, pushCount, longPressSeconds, keyIndex):
         if not isLongPress and pushCount == 1:
-            if keyIndex == 1:
-                if (self.target_index - 1) < 0:
-                    self.target_index = len(self.fileObjs) - 1
-                else:
-                    self.target_index = self.target_index - 1
+            if self.proc is not None:
+                self.killallMplayer()
             else:
-                if (self.target_index + 1) >= len(self.fileObjs):
-                    self.target_index = 0
+                if keyIndex == 1:
+                    if (self.target_index - 1) < 0:
+                        self.target_index = len(self.fileObjs) - 1
+                    else:
+                        self.target_index = self.target_index - 1
                 else:
-                    self.target_index = self.target_index + 1
+                    if (self.target_index + 1) >= len(self.fileObjs):
+                        self.target_index = 0
+                    else:
+                        self.target_index = self.target_index + 1
 
-            
-            if len(self.fileObjs) > 0 and self.target_index < len(self.fileObjs):
-                pic_path = Config().get('camera.video_path', '/home/pi/Videos/')
-                filepath = os.path.join(pic_path, self.fileObjs[self.target_index])
-                self.loadFile(filepath)
+                
+                if len(self.fileObjs) > 0 and self.target_index < len(self.fileObjs):
+                    video_path = Config().get('camera.video_path', '/home/pi/Videos/')
+                    filepath = os.path.join(video_path, self.fileObjs[self.target_index])
+                    self.loadFile(filepath)
 
             return True
-        # if isLongPress:
-        #     if longPressSeconds == 2:
-        #         return True
-        #     pass
+        if isLongPress:
+            if longPressSeconds == 2:
+                video_path = Config().get('camera.video_path', '/home/pi/Videos/')
+                filepath = os.path.join(video_path, self.fileObjs[self.target_index])
+                self.playVideo(filepath)
+                return True
+            pass
         return False
 
     def on_hidden(self):
+        self.killallMplayer()
         pass
+
+    def killallMplayer(self):
+        os.system('ps ax | grep "mplayer" | grep -v grep | awk \'{print "sudo kill -9 "$1}\' | bash')
+        self.proc = None
+
+    def playVideo(self, path):
+        windowSize = UIManager().getWindowSize()
+        cmd = '/usr/bin/mplayer -vo fbdev2:/dev/fb1 -x {} -y {} -ao alsa {}'.format(windowSize[0], windowSize[1], path)
+        self.proc = subprocess.Popen(cmd, shell=True)
 
     def update(self, surface = None):
         surface = UIManager().getSurface()
         windowSize = UIManager().getWindowSize()
         window_width = windowSize[0]
         window_height = windowSize[1]
-        surface.fill(color_black)
 
-        if len(self.fileObjs) == 0:
-            welcomeTxt = bigFont.render('No', True, color_white)
-            welcome2Txt = bigFont.render('Images', True, color_white)
-            surface.blit(welcomeTxt, (window_width / 2 - welcomeTxt.get_width() / 2, 10))
-            surface.blit(welcome2Txt, (window_width / 2 - welcome2Txt.get_width() / 2, 60))
+
+        if self.proc is not None:
+            if self.proc.poll() is not None:
+                print('Mplayer Process is exited with code:', self.proc.poll())
+                self.proc = None
+            # else:
+            #     current_text = zhMiniFont.render('Mplayer已启动', True, color_white)
         else:
-            if self.current_img is not None:
-                if self.current_img.__class__.__name__ == pygame.Surface.__name__:
-                    surface.blit(self.current_img, (window_width / 2 - self.current_img.get_width() / 2, window_height / 2 - self.current_img.get_height() / 2))
-                else:
-                    self.current_img.render(surface, (window_width / 2 - self.current_img.get_width() / 2, window_height / 2 - self.current_img.get_height() / 2))
-            if self.current_filename is not None:
-                nameTxt = zhMiniFont.render(self.current_filename, True, color_white)
-                surface.blit(nameTxt, (window_width / 2 - nameTxt.get_width() / 2, 10))
+            # current_text = zhMiniFont.render('Mplayer没有启动', True, color_white)
+            surface.fill(color_black)
 
-        page = '{}/{}'.format(self.target_index + 1, len(self.fileObjs))
-        pageText = miniFont.render(page, True, color_green)
-        surface.blit(pageText, (window_width / 2 - pageText.get_width() / 2, window_height - pageText.get_height()))
+            if len(self.fileObjs) == 0:
+                welcomeTxt = bigFont.render('No', True, color_white)
+                welcome2Txt = bigFont.render('Video', True, color_white)
+                surface.blit(welcomeTxt, (window_width / 2 - welcomeTxt.get_width() / 2, 10))
+                surface.blit(welcome2Txt, (window_width / 2 - welcome2Txt.get_width() / 2, 60))
+            else:
+                if self.current_img is not None:
+                    if self.current_img.__class__.__name__ == pygame.Surface.__name__:
+                        surface.blit(self.current_img, (window_width / 2 - self.current_img.get_width() / 2, window_height / 2 - self.current_img.get_height() / 2))
+                    else:
+                        self.current_img.render(surface, (window_width / 2 - self.current_img.get_width() / 2, window_height / 2 - self.current_img.get_height() / 2))
+                if self.current_filename is not None:
+                    nameTxt = zhMiniFont.render(self.current_filename, True, color_white)
+                    surface.blit(nameTxt, (window_width / 2 - nameTxt.get_width() / 2, 10))
+
+            page = '{}/{}'.format(self.target_index + 1, len(self.fileObjs))
+            pageText = miniFont.render(page, True, color_green)
+            surface.blit(pageText, (window_width / 2 - pageText.get_width() / 2, window_height - pageText.get_height()))
+
         pass
 
     pass

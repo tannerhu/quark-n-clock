@@ -6,6 +6,7 @@ import threading
 from ruamel.yaml import YAML
 import logging
 import logging.config
+
 import pygame
 import time
 import signal
@@ -61,7 +62,6 @@ try:
 except: 
     pass
 
-
 ledUser = LED("usr_led", True)
 
 ##############
@@ -80,6 +80,13 @@ writePid()
 ##############
 if not os.getenv('SDL_FBDEV'):
     os.putenv('SDL_FBDEV', Config().get('display.device'))#利用quark自带tft屏幕显示
+# if not os.getenv('fbcon'):
+#     os.putenv('fbcon', 'map:1')#利用quark自带tft屏幕显示
+# if not os.getenv('SDL_VIDEODRIVER'):
+    # os.putenv('SDL_VIDEODRIVER', 'DirectFB')#利用quark自带tft屏幕显示
+# if not os.getenv('SDL_RENDER_DRIVER'):
+#     os.putenv('SDL_RENDER_DRIVER', 'fbcon')
+
 
 logger.debug('pygame initing')
 pygame.init()
@@ -89,6 +96,8 @@ pygame.mixer.quit()
 from ui.theme import *
 game_clock = pygame.time.Clock()
 
+# if pygame.version.vernum.major == 2:
+pygame.display.init()
 display_info = pygame.display.Info()
 w = display_info.current_w
 h = display_info.current_h
@@ -97,6 +106,10 @@ window_size=(w,h)
 game_surface = pygame.display.set_mode(window_size, pygame.FULLSCREEN)
 pygame.mouse.set_visible( False )
 mouseLastMotion = 0
+
+
+# num_devices = pygame._sdl2.touch.get_num_devices()
+# logger.debug('Touch Device Count %d' % num_devices)
 
 ##############
 ### UIManager init
@@ -410,6 +423,9 @@ def main():
     global uiManager
     global mouseLastMotion
 
+    surface2 = uiManager.surface.convert_alpha()
+    surface2.fill((255,255,255,0))
+
     MenuUI_name = MenuUI.__name__
     signal.signal(signal.SIGINT, _signal_handler)
     signal.signal(signal.SIGTERM, _signal_handler)
@@ -418,6 +434,7 @@ def main():
 
     while uiManager.isRunning():
         for event in pygame.event.get():
+            # logger.debug('event = {}'.format(event))
             if event.type == pygame.QUIT:
                 uiManager.quit()
                 return

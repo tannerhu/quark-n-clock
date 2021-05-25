@@ -136,9 +136,13 @@ class MenuUI(BaseUI):
         windowSize = UIManager().getWindowSize()
         window_width = windowSize[0]
         window_height = windowSize[1]
-        leftRect = pygame.Rect(5, window_height / 2 - self.smallIconSize[1] / 2, self.smallIconSize[0], self.smallIconSize[1])
-        rightRect = pygame.Rect(window_width - self.smallIconSize[1] - 5, window_height / 2 - self.smallIconSize[1] / 2, self.smallIconSize[0], self.smallIconSize[1])
-        centerRect = pygame.Rect(window_width / 2 - self.normalIconSize[0] / 2, window_height / 2 - self.normalIconSize[1] / 2, self.normalIconSize[0], self.normalIconSize[1])
+        # leftRect = pygame.Rect(5, window_height / 2 - self.smallIconSize[1] / 2, self.smallIconSize[0], self.smallIconSize[1])
+        # rightRect = pygame.Rect(window_width - self.smallIconSize[1] - 5, window_height / 2 - self.smallIconSize[1] / 2, self.smallIconSize[0], self.smallIconSize[1])
+        # centerRect = pygame.Rect(window_width / 2 - self.normalIconSize[0] / 2, window_height / 2 - self.normalIconSize[1] / 2, self.normalIconSize[0], self.normalIconSize[1])
+
+        leftRect = pygame.Rect(5, 5, self.smallIconSize[0], window_height - 10)
+        rightRect = pygame.Rect(window_width - self.smallIconSize[1] - 5, 5, self.smallIconSize[0], window_height - 10)
+        centerRect = pygame.Rect(window_width / 2 - self.normalIconSize[0] / 2, 5, self.normalIconSize[0], window_height - 10)
 
         if leftRect.collidepoint(event.pos):
             # print("click left icon")

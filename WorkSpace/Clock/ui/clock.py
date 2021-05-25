@@ -18,17 +18,24 @@ class ClockUI(BaseUI):
     NET_STATS = []
     INTERFACE = 'wlan0'
 
-    sysInfoRect = pygame.Rect(0, 0, UIManager().getWindowSize()[0], 30)
     sysInfoShowType = Stepper(0, 2, 1, 0)
-
-    timeRect = pygame.Rect(0, 31, UIManager().getWindowSize()[0], 58)
     timeShowType = Stepper(0, 1, 1, 0)
-
-    dateRect = pygame.Rect(0, 88, UIManager().getWindowSize()[0], 24)
     dateShowType = Stepper(0, 0, 1, 0)
-
-    netRect = pygame.Rect(0, 113, UIManager().getWindowSize()[0], 22)
     netShowType = Stepper(0, 1, 1, 0)
+
+    windowSize = UIManager().getWindowSize()
+    window_width = windowSize[0]
+    window_height = windowSize[1]
+    if window_width == 320:
+        sysInfoRect = pygame.Rect(0, 0, UIManager().getWindowSize()[0], int(window_height * (30 / 135)))
+        timeRect = pygame.Rect(0, int(window_height * (31 / 135)), UIManager().getWindowSize()[0], int(window_height * (58 / 135)))
+        dateRect = pygame.Rect(0, int(window_height * (88 / 135)), UIManager().getWindowSize()[0], int(window_height * (24 / 135)))
+        netRect = pygame.Rect(0, int(window_height * (113 / 135)), UIManager().getWindowSize()[0], int(window_height * (22 / 135)))
+    else:
+        sysInfoRect = pygame.Rect(0, 0, UIManager().getWindowSize()[0], 30)
+        timeRect = pygame.Rect(0, 31, UIManager().getWindowSize()[0], 58)
+        dateRect = pygame.Rect(0, 88, UIManager().getWindowSize()[0], 24)
+        netRect = pygame.Rect(0, 113, UIManager().getWindowSize()[0], 22)
 
     prevSecondIntValue = 0
     RX_RATE = 0
@@ -88,6 +95,17 @@ class ClockUI(BaseUI):
             self.dateShowType.next()
         elif self.netRect.collidepoint(pygame.mouse.get_pos()):
             self.netShowType.next()
+    
+    def onTouchEnd(self, event):
+        if self.sysInfoRect.collidepoint(event):
+            self.sysInfoShowType.next()
+        elif self.timeRect.collidepoint(event):
+            self.timeShowType.next()
+        elif self.dateRect.collidepoint(event):
+            self.dateShowType.next()
+        elif self.netRect.collidepoint(event):
+            self.netShowType.next()
+        pass
 
     def update(self, surface = None):
         surface = UIManager().getSurface()
@@ -214,7 +232,7 @@ class ClockUI(BaseUI):
             # surface.blit(yearText, (145,120))
             if self.timeShowType.current() == 0:
                 surface.blit(amText,(190,22))
-            surface.blit(dayText,(170,86))
+            surface.blit(dayText,(window_width - dayText.get_width(),86))
 
             if self.netShowType.current() == 1:
                 surface.blit(netSpeedInText, (window_width - netSpeedInText.get_width(), window_height - 23))
@@ -226,6 +244,11 @@ class ClockUI(BaseUI):
         self.prevSecondIntValue = secondIntValue
         # welcomeTxt = bigFont.render(ClockUI.__name__, True, color_white)
         # surface.blit(welcomeTxt, (window_width / 2 - welcomeTxt.get_width() / 2, window_height / 2 - welcomeTxt.get_height() / 2))
+
+        # pygame.draw.rect(surface, (255,255,255), self.sysInfoRect, 1)
+        # pygame.draw.rect(surface, (255,255,255), self.timeRect, 1)
+        # pygame.draw.rect(surface, (255,255,255), self.dateRect, 1)
+        # pygame.draw.rect(surface, (255,255,255), self.netRect, 1)
         pass
 
     pass

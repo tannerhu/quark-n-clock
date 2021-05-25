@@ -105,6 +105,11 @@ class UIManager(metaclass=Singleton):
         ###
         ### DEBUG FOR UI ELEMENT POSITION
         ###
+        # pygame.draw.lines(self.surface, (255,255,255), True, 
+        #     [(0, 0), 
+        #      (self.window_size[0] - 1, 0), 
+        #      (self.window_size[0] - 1, self.window_size[1] - 1), 
+        #      (0, self.window_size[1] - 1)], 1)
         # for x in range(0, self.window_size[0], 10):
         #     pygame.draw.line(self.surface, (255,255,255), (x, 0), (x, (5 if x % 50 != 0 else 10)), 1)
         #     pygame.draw.line(self.surface, (255,255,255), (x, self.window_size[1] - 1), (x, self.window_size[1] - (6 if x % 50 != 0 else 11)), 1)
@@ -239,6 +244,15 @@ class BaseUI:
         pass
 
     def onMouseWheel(self, event):
+        pass
+
+    def onTouchStart(self, event):
+        pass
+
+    def onTouchMove(self, event):
+        pass
+
+    def onTouchEnd(self, event):
         pass
 
     def onKeyPush(self, pushCount, keyIndex):
