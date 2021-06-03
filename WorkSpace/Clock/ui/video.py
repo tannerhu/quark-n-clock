@@ -65,7 +65,8 @@ class VideoUI(BaseUI):
         window_height = windowSize[1]
         leftRect = pygame.Rect(3, 5, window_width / 2 - 3, window_height - 10)
         rightRect = pygame.Rect(window_width / 2, 5, window_width / 2, window_height - 10)
-
+        if len(self.fileObjs) == 0:
+            return
         if leftRect.collidepoint(event.pos):
             if (self.target_index - 1) < 0:
                 self.target_index = len(self.fileObjs) - 1
