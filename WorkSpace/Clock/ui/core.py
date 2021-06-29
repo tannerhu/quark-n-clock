@@ -294,7 +294,7 @@ class BaseUI:
             for c in self.controls:
                 c.paint()
         pass
-
+    # callback()不存在永远返回None 有缓存既从缓存取  无则调用callback()获取值并缓存值最后返回
     def get_cache(self, key, callback):
         if callback is None:
             return None

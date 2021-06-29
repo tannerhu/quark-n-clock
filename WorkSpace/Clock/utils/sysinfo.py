@@ -13,11 +13,18 @@ def cputempf():
     StringToOutput = "CPU {0} C".format(round(int(CPUTemp) /1000.0, 2))
     return StringToOutput
 
+def cputemp():
+    f = open("/sys/class/thermal/thermal_zone0/temp")
+    CPUTemp = f.read()
+    f.close()
+    IntTemp = int(int(CPUTemp) /1000.0)
+    return IntTemp
+
 # Return % of CPU used by user as a character string
 # def getCPUuse():
 #     return (str(os.popen("top -b -n1 | awk '/Cpu\(s\):/ {print $2}'").readline().strip()))
 
-def readCpuInfo(): 
+def readCpuInfo():
     f = open ( '/proc/stat' )
     lines = f.readlines()
     f.close()
@@ -33,7 +40,7 @@ def readCpuInfo():
         total = total + int (counters[i])
     idle = int (counters[ 4 ])
     return { 'total' :total, 'idle' :idle}
-    
+
 def calcCpuUsage(counters1, counters2):
      idle = counters2[ 'idle' ] - counters1[ 'idle' ]
      total = counters2[ 'total' ] - counters1[ 'total' ]
@@ -46,7 +53,7 @@ def getCpuUsage():
     return (round(calcCpuUsage(counters1, counters2), 1))
 
 
-def get_host_ip(): 
+def get_host_ip():
     s = None
     ip = ''
     try:

@@ -29,7 +29,7 @@ def getAppFont(size, fontName):
     for f in _FontCache:
         if ("%d-%s" % (f.size, f.fontName)) == ("%d-%s" % (size, fontName)):
             return f.font
-    
+
     newFont = FontObj(size, fontName, _FontNames[fontName])
     _FontCache.append(newFont)
     return newFont.font
@@ -53,7 +53,21 @@ zhMiniFont = getAppFont(20, 'PingFang') # pygame.font.Font(zhFontPath, 20)
 color_white = (255,255,255)
 color_black = (0,0,0)
 color_green = (0,255,0)
+color_lightgreen = (189,255,122)
+color_blue = (0,0,255)
+color_lakeblue = (0,174,204)
+color_skyblue = (122,255,255)
+color_purple = (125,0,255)
 color_red = (255,0,0)
+color_peach = (255,0,128)
+color_pink = (255,122,189)
+
+
+
+color_yellow = (255,255,0)
+color_orange = (255,128,0)
+
+
 
 SIDE_MENU_RECT = pygame.Rect(0, 10, 5, 115)
 

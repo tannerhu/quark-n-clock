@@ -8,6 +8,7 @@ from ui.core import UIManager, BaseUI
 from ui.theme import *
 from utils.stepper import Stepper
 from utils.sysinfo import *
+from utils.textcolor import *
 from utils import runAsync
 
 logger = logging.getLogger('ui.clock')
@@ -17,7 +18,7 @@ class ClockUI(BaseUI):
     showTick = 0
     NET_STATS = []
     INTERFACE = 'wlan0'
-
+    # 步进步设置Stepper(最小值, 最大值,步进单位,当前值) 设置点击后可变化显示状态的数量
     sysInfoShowType = Stepper(0, 2, 1, 0)
     timeShowType = Stepper(0, 1, 1, 0)
     dateShowType = Stepper(0, 0, 1, 0)
@@ -26,7 +27,9 @@ class ClockUI(BaseUI):
     windowSize = UIManager().getWindowSize()
     window_width = windowSize[0]
     window_height = windowSize[1]
+    # 对象矩形框设置
     if window_width == 320:
+        # pygame.Rect(left, top, width, height)
         sysInfoRect = pygame.Rect(0, 0, UIManager().getWindowSize()[0], int(window_height * (30 / 135)))
         timeRect = pygame.Rect(0, int(window_height * (31 / 135)), UIManager().getWindowSize()[0], int(window_height * (58 / 135)))
         dateRect = pygame.Rect(0, int(window_height * (88 / 135)), UIManager().getWindowSize()[0], int(window_height * (24 / 135)))
@@ -47,7 +50,8 @@ class ClockUI(BaseUI):
     dskInfo = get_disk_info()
     hostIp = get_host_ip()
 
-    cputemp = None
+    cputempf = None
+    cputemp = 0
 
     months = ['January', 'February', 'March', 'April', 'May', 
     'June', 'July', 'August', 'September', 'October', 'November', 'December']
@@ -70,7 +74,8 @@ class ClockUI(BaseUI):
 
     def on_shown(self):
         self.showTick = pygame.time.get_ticks()
-        self.cputemp = cputempf()
+        self.cputempf = cputempf()
+        self.cputemp = cputemp()
         self.rx()
         self.tx()
         self.lastCpuInfo = readCpuInfo()
@@ -165,7 +170,8 @@ class ClockUI(BaseUI):
         dskUse = str(dskInfo['percent'])
 
         if secondIntValue % 5 == 0:
-            self.cputemp = cputempf()
+            self.cputempf = cputempf()
+            self.cputemp = cputemp()
 
         am = 'AM'
         
@@ -177,13 +183,14 @@ class ClockUI(BaseUI):
         if len(shour) == 1:
             shour = '0' + shour
         timeStr = shour + ':' + minute
+        # largeFont.render(内容, 是否抗锯齿, 颜色)
         # timeText = largeFont.render(timeStr, True, color_green)
         secondText = self.get_cache('secondText_{}'.format(second), lambda: middleFont.render(second, True, color_green))
         amText = self.get_cache('amText_{}'.format(am), lambda: middleFont.render(am, True, color_green))
 
         if self.sysInfoShowType.current() == 0:
-            sysText = self.get_cache('sysText_{}'.format(self.cputemp), lambda: smallFont.render(self.cputemp, True, color_white))
-            sysUseText = self.get_cache('sysUseText_{}'.format(self.cputemp), lambda: smallFont.render(str(cpuUse) + '%', True, color_white))
+            sysText = self.get_cache('sysText_{}'.format(self.cputempf), lambda: smallFont.render(self.cputempf, True, tempColor(self.cputemp)))
+            sysUseText = self.get_cache('sysUseText_{}'.format(self.cputempf), lambda: smallFont.render(str(cpuUse) + '%', True, color_white))
         if self.sysInfoShowType.current() == 1:
             sysText = self.get_cache('sysText_{}'.format(memStr), lambda: smallFont.render(memStr, True, color_white))
             sysUseText = self.get_cache('sysUseText_{}'.format(memUse), lambda: smallFont.render(memUse + '%', True, color_white))
