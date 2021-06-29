@@ -7,7 +7,7 @@ import pygame
 
 _FontCache = []
 _FontNames = {
-    'Normal': "fonts/icons.TTF",
+    'ARLRDBD': "fonts/ARLRDBD.TTF",
     'DIGIT': "fonts/DS-DIGIT.TTF",
     'PingFang': "fonts/PingFang.ttc"
 }
@@ -43,8 +43,8 @@ largeFont = getAppFont(82, 'DIGIT') #pygame.font.Font(fontPath, 82)
 bigFont = getAppFont(52, 'DIGIT') # pygame.font.Font(fontPath, 52)
 middleFont = getAppFont(40, 'DIGIT') # pygame.font.Font(fontPath, 40)
 smallFont = getAppFont(30, 'DIGIT') # pygame.font.Font(fontPath, 30)
-miniFont = getAppFont(26, 'Normal') # pygame.font.Font(fontPath, 26)
-tinyFont = getAppFont(24, 'Normal') # pygame.font.Font(fontPath, 24)
+miniFont = getAppFont(26, 'ARLRDBD') # pygame.font.Font(fontPath, 26)
+tinyFont = getAppFont(24, 'ARLRDBD') # pygame.font.Font(fontPath, 24)
 
 # zhFontPath = os.path.join(sys.path[0], _FontNames['PingFang'])
 zhSmallFont = getAppFont(30, 'PingFang') # pygame.font.Font(zhFontPath, 30)
