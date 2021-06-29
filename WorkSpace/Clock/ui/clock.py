@@ -192,14 +192,14 @@ class ClockUI(BaseUI):
         amText = self.get_cache('amText_{}'.format(am), lambda: middleFont.render(am, True, color_green))
 
         if self.sysInfoShowType.current() == 0:
-            sysText = self.get_cache('sysText_{}'.format(self.cputempf), lambda: smallFont.render(self.cputempf, True, tempColor(self.cputemp)))
-            sysUseText = self.get_cache('sysUseText_{}'.format(self.cputempf), lambda: smallFont.render(str(cpuUsef) + '%', True, cpuUseColor(cpuUse)))
+            sysText = self.get_cache('sysText_{}'.format(self.cputempf), lambda: miFont.render(self.cputempf, True, tempColor(self.cputemp)))
+            sysUseText = self.get_cache('sysUseText_{}'.format(self.cputempf), lambda: miFont.render(str(cpuUsef) + '%', True, cpuUseColor(cpuUse)))
         if self.sysInfoShowType.current() == 1:
-            sysText = self.get_cache('sysText_{}'.format(memStr), lambda: smallFont.render(memStr, True, color_white))
-            sysUseText = self.get_cache('sysUseText_{}'.format(memUse), lambda: smallFont.render(memUse + '%', True, color_white))
+            sysText = self.get_cache('sysText_{}'.format(memStr), lambda: miFont.render(memStr, True, color_white))
+            sysUseText = self.get_cache('sysUseText_{}'.format(memUse), lambda: miFont.render(memUse + '%', True, color_white))
         if self.sysInfoShowType.current() == 2:
-            sysText = self.get_cache('sysText_{}'.format(dskStr), lambda: smallFont.render(dskStr, True, color_white))
-            sysUseText = self.get_cache('sysUseText_{}'.format(dskUse), lambda: smallFont.render(dskUse, True, color_white))
+            sysText = self.get_cache('sysText_{}'.format(dskStr), lambda: miFont.render(dskStr, True, color_white))
+            sysUseText = self.get_cache('sysUseText_{}'.format(dskUse), lambda: miFont.render(dskUse, True, color_white))
         rxStr = '' + str(self.RX_RATE) + ' M/s'
         txStr = '' + str(self.TX_RATE) + ' M/s'
         netSpeedInText = self.get_cache('rxStr_{}'.format(rxStr), lambda: tinyFont.render(rxStr, True, color_green if self.RX_RATE > 0 else color_white))
