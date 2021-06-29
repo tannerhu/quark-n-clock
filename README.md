@@ -128,7 +128,7 @@ hw.snd.maxautovchans=4
    ```bash
    chmod +x /home/pi/GIT/quark-n/WorkSpace/Scripts/start_ui_clock.sh
    mkdir -p ~/WorkSpace/Scripts/services
-   ln -s /home/pi/GIT/quark-n/WorkSpace/Scripts/services/ui_clock.service ~/WorkSpace/Scripts/services/
+   ln -s /home/pi/GIT/quark-n/WorkSpace/Scripts/services/ui-clock.service ~/WorkSpace/Scripts/services/
    ln -s /home/pi/GIT/quark-n/WorkSpace/Scripts/start_ui_clock.sh ~/WorkSpace/Scripts/
    ```
 6. 从这里，下载2个字体文件：“STHeiti Light.ttc”，“PingFang.ttc”，拷贝到~/WorkSpace/Clock/fonts。
@@ -146,7 +146,7 @@ hw.snd.maxautovchans=4
    cd /home/pi/WorkSpace/Clock/
    sudo python -m pip install -r requirements.txt
    mkdir /home/pi/WorkSpace/Clock/logs
-   sudo ln -s /home/pi/WorkSpace/Scripts/services/ui_clock.service /lib/systemd/system/
+   sudo ln -s /home/pi/WorkSpace/Scripts/services/ui-clock.service /lib/systemd/system/
    sudo systemctl daemon-reload
    sudo systemctl enable ui_clock
    ```
