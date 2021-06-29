@@ -7,6 +7,7 @@ import pygame
 
 _FontCache = []
 _FontNames = {
+    'Normal': "fonts/icons.TTF",
     'DIGIT': "fonts/DS-DIGIT.TTF",
     'PingFang': "fonts/PingFang.ttc"
 }
@@ -42,8 +43,8 @@ largeFont = getAppFont(82, 'DIGIT') #pygame.font.Font(fontPath, 82)
 bigFont = getAppFont(52, 'DIGIT') # pygame.font.Font(fontPath, 52)
 middleFont = getAppFont(40, 'DIGIT') # pygame.font.Font(fontPath, 40)
 smallFont = getAppFont(30, 'DIGIT') # pygame.font.Font(fontPath, 30)
-miniFont = getAppFont(26, 'DIGIT') # pygame.font.Font(fontPath, 26)
-tinyFont = getAppFont(24, 'DIGIT') # pygame.font.Font(fontPath, 24)
+miniFont = getAppFont(26, 'Normal') # pygame.font.Font(fontPath, 26)
+tinyFont = getAppFont(24, 'Normal') # pygame.font.Font(fontPath, 24)
 
 # zhFontPath = os.path.join(sys.path[0], _FontNames['PingFang'])
 zhSmallFont = getAppFont(30, 'PingFang') # pygame.font.Font(zhFontPath, 30)
@@ -57,10 +58,11 @@ color_lightgreen = (189,255,122)
 color_blue = (0,0,255)
 color_lakeblue = (0,174,204)
 color_skyblue = (122,255,255)
-color_purple = (125,0,255)
+color_purple = (189,128,255)
 color_red = (255,0,0)
 color_peach = (255,0,128)
 color_pink = (255,122,189)
+color_orange = (255,88,50)
 
 
 

@@ -45,6 +45,7 @@ class ClockUI(BaseUI):
     TX_RATE = 0
 
     lastCpuInfo = readCpuInfo()
+    cpuUsef = 0
     cpuUse = 0
     memInfo = get_mem_info()
     dskInfo = get_disk_info()
@@ -158,9 +159,11 @@ class ClockUI(BaseUI):
             self.hostIp = get_host_ip()
 
             cpuInfo = readCpuInfo()
-            self.cpuUse = str(round(calcCpuUsage(self.lastCpuInfo, cpuInfo), 1)) # getCPUuse()
+            self.cpuUsef = str(round(calcCpuUsage(self.lastCpuInfo, cpuInfo), 1)) # getCPUuse()
+            self.cpuUse = int(calcCpuUsage(self.lastCpuInfo, cpuInfo))
             self.lastCpuInfo = cpuInfo
 
+        cpuUsef = self.cpuUsef
         cpuUse = self.cpuUse
         memInfo = self.memInfo
         memStr = "MEM {0}M".format(memInfo['free'])
@@ -190,7 +193,7 @@ class ClockUI(BaseUI):
 
         if self.sysInfoShowType.current() == 0:
             sysText = self.get_cache('sysText_{}'.format(self.cputempf), lambda: smallFont.render(self.cputempf, True, tempColor(self.cputemp)))
-            sysUseText = self.get_cache('sysUseText_{}'.format(self.cputempf), lambda: smallFont.render(str(cpuUse) + '%', True, color_white))
+            sysUseText = self.get_cache('sysUseText_{}'.format(self.cputempf), lambda: smallFont.render(str(cpuUsef) + '%', True, cpuUseColor(cpuUse)))
         if self.sysInfoShowType.current() == 1:
             sysText = self.get_cache('sysText_{}'.format(memStr), lambda: smallFont.render(memStr, True, color_white))
             sysUseText = self.get_cache('sysUseText_{}'.format(memUse), lambda: smallFont.render(memUse + '%', True, color_white))
