@@ -62,7 +62,7 @@ try:
 except: 
     pass
 
-ledUser = LED("usr_led", True)
+ledUser = LED("usr_led", False)
 
 ##############
 ### pid file init
