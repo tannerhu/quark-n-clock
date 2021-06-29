@@ -466,6 +466,17 @@ do_boot_from_tf() {
   do_set_boot_from_tf_env
 }
 
+do_set_boot_from_usb_env() {
+  (cd /boot && {\
+    sed -i 's/ root=\/dev\/[^ ]* / root=\/dev\/sda2 /g' boot.cmd; \
+    sed -i 's/ data=\/dev\/[^ ]*/ data=\/dev\/sda3/g' boot.cmd; \
+    mkimage -C none -A arm -T script -d boot.cmd boot.scr; \
+  })
+  ASK_TO_REBOOT=1
+  whiptail --msgbox "${BOARD} should boot from emmc next time you reboot the board." 20 60 1
+}
+
+
 do_boot_from_emmc() {
   grep 'root=\/dev\/mmcblk1p2' /proc/cmdline 2>&1 > /dev/null
   RET=$?
@@ -474,6 +485,16 @@ do_boot_from_emmc() {
     return 0
   fi
   do_set_boot_from_emmc_env
+}
+
+do_boot_from_usb() {
+  grep 'root=\/dev\/sda2' /proc/cmdline 2>&1 > /dev/null
+  RET=$?
+  if [ $RET -eq 0 ]; then
+    whiptail --msgbox "The current setting is this one." 20 60 2
+    return 0
+  fi
+  do_set_boot_from_usb_env
 }
 
 do_boot_from_hd() {
@@ -592,12 +613,14 @@ do_boot_device() {
       "D1 Hard drive" "Load the root filesystem from SSD/HD/Usbdisk" \
       "D2 TF card" "Load the root filesystem from TF card" \
       "D3 emmc" "Load the root filesystem from emmc" \
+      "D4 USB" "Load the root filesystem from usb" \
     3>&1 1>&2 2>&3)
   if [ $? -eq 0 ]; then
     case "$BOOTOPT" in
       D1*) do_boot_from_hd ;;
       D2*) do_boot_from_tf ;;
       D3*) do_boot_from_emmc ;;
+      D4*) do_boot_from_usb ;;
       *)
         whiptail --msgbox "Programmer error, unrecognised boot option" 20 60 2
         return 1
