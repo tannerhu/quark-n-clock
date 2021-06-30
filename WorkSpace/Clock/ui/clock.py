@@ -46,12 +46,10 @@ class ClockUI(BaseUI):
 
     lastCpuInfo = readCpuInfo()
     cpuUsef = 0
-    cpuUse = 0
     memInfo = get_mem_info()
     dskInfo = get_disk_info()
     hostIp = get_host_ip()
 
-    cputempf = None
     cputemp = 0
 
     months = ['January', 'February', 'March', 'April', 'May', 
@@ -75,7 +73,6 @@ class ClockUI(BaseUI):
 
     def on_shown(self):
         self.showTick = pygame.time.get_ticks()
-        self.cputempf = cputempf()
         self.cputemp = cputemp()
         self.rx()
         self.tx()
@@ -159,12 +156,10 @@ class ClockUI(BaseUI):
             self.hostIp = get_host_ip()
 
             cpuInfo = readCpuInfo()
-            self.cpuUsef = str(round(calcCpuUsage(self.lastCpuInfo, cpuInfo), 1)) # getCPUuse()
-            self.cpuUse = int(calcCpuUsage(self.lastCpuInfo, cpuInfo))
+            self.cpuUsef = round(calcCpuUsage(self.lastCpuInfo, cpuInfo), 1) # getCPUuse()
             self.lastCpuInfo = cpuInfo
 
         cpuUsef = self.cpuUsef
-        cpuUse = self.cpuUse
         memInfo = self.memInfo
         memStr = "MEM {0}M".format(memInfo['free'])
         memUse = str(memInfo['percent'])
@@ -173,7 +168,6 @@ class ClockUI(BaseUI):
         dskUse = str(dskInfo['percent'])
 
         if secondIntValue % 5 == 0:
-            self.cputempf = cputempf()
             self.cputemp = cputemp()
 
         am = 'AM'
@@ -192,8 +186,9 @@ class ClockUI(BaseUI):
         amText = self.get_cache('amText_{}'.format(am), lambda: middleFont.render(am, True, color_green))
 
         if self.sysInfoShowType.current() == 0:
-            sysText = self.get_cache('sysText_{}'.format(self.cputempf), lambda: miFont.render(self.cputempf, True, tempColor(self.cputemp)))
-            sysUseText = self.get_cache('sysUseText_{}'.format(self.cputempf), lambda: miFont.render(str(cpuUsef) + '%', True, cpuUseColor(cpuUse)))
+            cputempf = "CPU {0} C".format(self.cputemp)
+            sysText = self.get_cache('sysText_{}'.format(cputempf), lambda: miFont.render(cputempf, True, tempColor(int(self.cputemp))))
+            sysUseText = self.get_cache('sysUseText_{}'.format(cputempf), lambda: miFont.render(str(cpuUsef) + '%', True, cpuUseColor(int(cpuUsef))))
         if self.sysInfoShowType.current() == 1:
             sysText = self.get_cache('sysText_{}'.format(memStr), lambda: miFont.render(memStr, True, color_white))
             sysUseText = self.get_cache('sysUseText_{}'.format(memUse), lambda: miFont.render(memUse + '%', True, color_white))

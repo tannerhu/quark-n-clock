@@ -17,8 +17,8 @@ def cputemp():
     f = open("/sys/class/thermal/thermal_zone0/temp")
     CPUTemp = f.read()
     f.close()
-    IntTemp = int(int(CPUTemp) /1000.0)
-    return IntTemp
+    temp = round(int(CPUTemp) /1000.0, 2)
+    return temp
 
 # Return % of CPU used by user as a character string
 # def getCPUuse():

@@ -33,9 +33,9 @@ def cpuUseColor(use):
         if 20 > use > 9:
             color = color_blue
         if 50 > use > 19:
-            color = color_pink
-        if 80 > use > 49:
             color = color_orange
+        if 80 > use > 49:
+            color = color_pink
         if 90 > use > 79:
             color =color_peach
         if use > 89:
