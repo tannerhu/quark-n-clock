@@ -1,173 +1,38 @@
+<p align="center"><img width="300" src="https://image.haxbk.com/blog/quark-n.jpg"></p>
+<h2 align="center">quark-n-clock</h2>
+
 # quark-n
-quark-n的一些使用技巧
+quark-n 即（quark-core+Atom-Shield-N）的一些使用说明：[quark-n基础使用说明](https://haxbk.com/pages/144bc7/?loadPage=1)
 
-wiki: https://wiki.seeedstudio.com/cn/Quantum-Mini-Linux-Development-Kit/
 
-大神项目地址：https://github.com/peng-zhihui/Project-Quantum
+本项目基于：[coolflyreg163/quark-n](https://gitee.com/coolflyreg163/quark-n) 进行部分修改
 
-对应的外壳：https://gitee.com/coolflyreg163/quark-n-3d
-
-1. 启动网络
-http://wiki.friendlyarm.com/wiki/index.php/Use_NetworkManager_to_configure_network_settings
-
-2. 镜像文件
-https://files.seeedstudio.com/wiki/Quantum-Mini-Linux-Dev-Kit/quark-n-21-1-11.zip
-
-3. 将TF卡系统拷贝到emmc，count的值需要先确定emmc的扇区数量
-```bash
-sudo dd if=/dev/mmcblk0 of=/dev/mmcblk1 bs=512 count=30717952 &
-sudo watch -n 5 pkill -USR1 ^dd$
-```
-
-4. 擦除emmc，count的值需要先确定emmc的扇区数量
-sudo dd if=/dev/zero of=/dev/mmcblk1 bs=512 count=30717952
-
-5. 重启网卡设备
-```bash
-sudo ifconfig wlan0 down
-sudo ifconfig wlan0 up
-```
-
-6. 连接网络的时候，如果需要输入提示密码
-sudo nmcli --ask c up SSID
-
-7. 如果总是出现提示密码未提供时，并且wifi的加密是wpa/wpa2个人级时，按照下方配置参数
-主要参数：
-- 802-11-wireless-security.key-mgmt:      wpa-psk
-- 802-11-wireless-security.proto:         wpa
-- 802-11-wireless-security.pairwise:      ccmp,tkip
-- 802-11-wireless-security.group:         ccmp,tkip
-- 802-11-wireless-security.psk-flags:     1 (agent-owned)
-
-密码写入文件，wpa-psk类型内容格式：802-11-wireless-security.psk:secret12345
-
-执行如下命令启动wifi连接
-```bash
-sudo nmcli c up [CONNECTION NAME | UUID] passwd-file /home/pi/.nmcli/passwd-wlan0
-```
-
-8. Linux下声卡独占的原因和解决
-简单解决办法如下：
-在/boot/defaults/loader.conf或/etc/sysctl.conf中加入下面两行。
-```conf
-hw.snd.pcm0.vchans=4
-hw.snd.maxautovchans=4
-```
-
-### TF卡有系统时启动到emmc分区
-1. 将 npi-config 覆盖拷贝到 /usr/bin/npi-config
-2. 运行sudo npi-config
-3. 3 Boot Options -> B3 Boot device -> D3 emmc
-
-### 使用新的dts的中的蓝色led设备
-1. 下载源代码
+### 使用ui-clock（新的dts的中的蓝色led设备）
+1. 安装ui-clock
    ```bash
-   mkdir ~/GIT
-   cd ~/GIT
-   git clone https://gitee.com/coolflyreg163/quark-n.git 
+   mkdir ~/Git && cd ~/Git
+   git clone -b master https://gitee.com/coolflyreg163/quark-n.git 
+   sh quark-n/WorkSpace/Clock/bin/install.sh
    ```
-2. 将 sun8i-h3-atom_n.dtb 替换到 /boot/sun8i-h3-atom_n.dtb
+2.  卸载ui-clock
    ```bash
-   cp ~/GIT/quark-n/sun8i-h3-atom_n.dtb /boot/
+   sh ~/Git/quark-n/WorkSpace/Clock/bin/uninstall.sh
+   # 要删源码的话执行
+   rm -rf ~/Git/quark-n
    ```
-3. 重启
-   ```bash
-   sudo shutdown -r now
-   ```
-4. 用于测试的Python代码，gpio_key_led.py
-   ```python
-   from periphery import LED
-   import time
-   ledUser = LED("usr_led", True)
-   while True:
-      time.sleep(1)
-      ledUser.write(255)
-      time.sleep(1)
-      ledUser.write(0)
 
-   ledUser.close()
-   ```
-4. gpio_key_led.py是按下Key后，亮起蓝色led
-5. 在/sys/class/leds下，显示 pwr_led(黄), status_led(白), usr_led(蓝)
-   ```bash
-   ls /sys/class/leds/
-   ```
-   或运行以下命令
-   ```bash
-   sudo cat /sys/kernel/debug/gpio
-   ```
-   输出结果里有一行
-   ```
-   gpio-359 (                    |usr_led             ) out hi
-   ```
-   即表示成功
-
-### 用于自带LCD屏的数码时钟
-**需要先执行：使用新的dts的中的蓝色led设备**
-1. 下载源代码
-   ```bash
-   mkdir ~/GIT
-   cd ~/GIT
-   git clone https://gitee.com/coolflyreg163/quark-n.git 
-   ```
-2. 如果很早之前已经下载过源代码，需要更新，可以运行如下命令（这一步非必须）
-   ```bash
-   cd ~/GIT/quark-n
-   git pull origin master
-   ```
-3. 备份之前的Clock
-   ```bash
-   cd /home/pi/WorkSpace/
-   mv Clock Clock_bak
-   ```
-4. 将Clock放置到指定位置
-   ```bash
-   ln -s /home/pi/GIT/quark-n/WorkSpace/Clock ~/WorkSpace/
-   ```
-5. 将启动脚本放置到指定位置
-   ```bash
-   chmod +x /home/pi/GIT/quark-n/WorkSpace/Scripts/start_ui_clock.sh
-   mkdir -p ~/WorkSpace/Scripts/services
-   ln -s /home/pi/GIT/quark-n/WorkSpace/Scripts/services/ui-clock.service ~/WorkSpace/Scripts/services/
-   ln -s /home/pi/GIT/quark-n/WorkSpace/Scripts/start_ui_clock.sh ~/WorkSpace/Scripts/
-   ```
-6. 从这里，下载2个字体文件：“STHeiti Light.ttc”，“PingFang.ttc”，拷贝到~/WorkSpace/Clock/fonts。
-   ```
-   https://gitee.com/coolflyreg163/quark-n/releases/Fonts
-   ```
-   或运行命令
-   ```bash
-   cd ~/WorkSpace/Clock/fonts
-   wget https://gitee.com/coolflyreg163/quark-n/attach_files/603438/download/STHeiti%20Light.ttc
-   wget https://gitee.com/coolflyreg163/quark-n/attach_files/603439/download/PingFang.ttc
-   ```
-7. 运行如下命令进行安装
-   ```bash
-   cd /home/pi/WorkSpace/Clock/
-   sudo python -m pip install -r requirements.txt
-   mkdir /home/pi/WorkSpace/Clock/logs
-   sudo ln -s /home/pi/WorkSpace/Scripts/services/ui-clock.service /lib/systemd/system/
-   sudo systemctl daemon-reload
-   sudo systemctl enable ui_clock
-   ```
-   ** ruamel.yaml 需要使用阿里云的镜像来安装，豆瓣的镜像里没有！ **
-   **到达这一步，已经在重启后会自动启动。下面是手动命令**
-8. 命令提示：
+3. 服务启停命令：
    1. 启动 （手动启动后按Ctrl + C可脱离）
         ```bash
-        sudo systemctl start ui_clock
+        sudo systemctl start ui-clock
         ```
    2. 停止
         ```bash
-        sudo systemctl stop ui_clock
+        sudo systemctl stop ui-clock
         ```
    3. 查看状态
         ```bash
-        sudo systemctl status ui_clock
-        ```
-   4. 重启系统
-        ```bash
-        sudo shutdown -r now
+        sudo systemctl status ui-clock
         ```
 
 #### 操作方式
@@ -219,6 +84,13 @@ hw.snd.maxautovchans=4
 - [ ] 加入MPU6050，进行姿态操作，增加甩飞Quark-N的几率
 - [ ] 实现设置界面的功能，可调整一些参数
 
+
+#### Linux下声卡独占的原因和解决
+简单解决办法如下： 在/boot/defaults/loader.conf或/etc/sysctl.conf中加入下面两行。
+
+hw.snd.pcm0.vchans=4
+hw.snd.maxautovchans=4
+
 #### 与WuKong-robot共同使用
 **注意：需要先执行：Linux下声卡独占的原因和解决**
 1. 备份原始自带的WuKong
@@ -238,7 +110,7 @@ hw.snd.maxautovchans=4
    ```
 4. 把这个库里的 /WuKong/contrib/LcdDisplay.py 替换到 /home/pi/.wukong/contrib/ 文件夹下的同名文件
    ```bash
-   cp ~/GIT/quark-n/WuKong/contrib/LcdDisplay.py /home/pi/.wukong/contrib/
+   cp ~/Git/quark-n/WuKong/contrib/LcdDisplay.py /home/pi/.wukong/contrib/
    ```
 5. 在 /home/pi/.wukong/config.yml 中添加配置。注意要符合格式
    ```yaml
@@ -253,7 +125,3 @@ hw.snd.maxautovchans=4
    ```bash
    sudo apt-get install fswebcam
    ```
-
-#### 其他驱动
-- RTL8821CU（8811cu）： https://gitee.com/coolflyreg163/rtl8821cu  内有ko文件，quark-n可直接可使用
-- RTL8723DU：https://gitee.com/coolflyreg163/rtl8723du    内有ko文件，quark-n直接可使用
