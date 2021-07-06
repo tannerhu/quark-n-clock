@@ -190,11 +190,13 @@ class ClockUI(BaseUI):
             sysText = self.get_cache('sysText_{}'.format(cputempf), lambda: miFont.render(cputempf, True, tempColor(int(self.cputemp))))
             sysUseText = self.get_cache('sysUseText_{}'.format(cputempf), lambda: miFont.render(str(cpuUsef) + '%', True, cpuUseColor(int(cpuUsef))))
         if self.sysInfoShowType.current() == 1:
-            sysText = self.get_cache('sysText_{}'.format(memStr), lambda: miFont.render(memStr, True, memUseColor(memUse)))
-            sysUseText = self.get_cache('sysUseText_{}'.format(str(memUse)), lambda: miFont.render(str(memUse) + '%', True,  memUseColor(memUse)))
+            memColor = memUseColor(memUse)
+            sysText = self.get_cache('sysText_{}'.format(memStr), lambda: miFont.render(memStr, True,memColor ))
+            sysUseText = self.get_cache('sysUseText_{}'.format(str(memUse)), lambda: miFont.render(str(memUse) + '%', True,  memColor))
         if self.sysInfoShowType.current() == 2:
-            sysText = self.get_cache('sysText_{}'.format(dskStr), lambda: miFont.render(dskStr, True, dskUseColor(float(dskUse))))
-            sysUseText = self.get_cache('sysUseText_{}'.format(str(dskUse)), lambda: miFont.render(str(dskUse), True, dskUseColor(float(dskUse))))
+            dskColor = dskUseColor(float(dskUse.replace('%', '')))
+            sysText = self.get_cache('sysText_{}'.format(dskStr), lambda: miFont.render(dskStr, True, dskColor))
+            sysUseText = self.get_cache('sysUseText_{}'.format(str(dskUse)), lambda: miFont.render(str(dskUse), True, dskColor))
         rxStr = '' + str(self.RX_RATE) + ' M/s'
         txStr = '' + str(self.TX_RATE) + ' M/s'
         netSpeedInText = self.get_cache('rxStr_{}'.format(rxStr), lambda: tinyFont.render(rxStr, True, netStatsColor(self.RX_RATE)))
