@@ -1,4 +1,4 @@
-<p align="center"><img width="400" src="https://image.haxbk.com/blog/quark-n.jpg"></p>
+<p align="center"><img width="400" src="https://image.haxbk.com/blog/quark-n-clock.jpg"></p>
 <h2 align="center">quark-n-clock</h2>
 
 # quark-n
