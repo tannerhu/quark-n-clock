@@ -162,10 +162,10 @@ class ClockUI(BaseUI):
         cpuUsef = self.cpuUsef
         memInfo = self.memInfo
         memStr = "MEM {0}M".format(memInfo['free'])
-        memUse = str(memInfo['percent'])
+        memUse = memInfo['percent']
         dskInfo = self.dskInfo
         dskStr = "DSK {0}".format(dskInfo['free'])
-        dskUse = str(dskInfo['percent'])
+        dskUse = dskInfo['percent']
 
         if secondIntValue % 5 == 0:
             self.cputemp = cputemp()
@@ -190,15 +190,15 @@ class ClockUI(BaseUI):
             sysText = self.get_cache('sysText_{}'.format(cputempf), lambda: miFont.render(cputempf, True, tempColor(int(self.cputemp))))
             sysUseText = self.get_cache('sysUseText_{}'.format(cputempf), lambda: miFont.render(str(cpuUsef) + '%', True, cpuUseColor(int(cpuUsef))))
         if self.sysInfoShowType.current() == 1:
-            sysText = self.get_cache('sysText_{}'.format(memStr), lambda: miFont.render(memStr, True, color_white))
-            sysUseText = self.get_cache('sysUseText_{}'.format(memUse), lambda: miFont.render(memUse + '%', True, color_white))
+            sysText = self.get_cache('sysText_{}'.format(memStr), lambda: miFont.render(memStr, True, memUseColor(memUse)))
+            sysUseText = self.get_cache('sysUseText_{}'.format(str(memUse)), lambda: miFont.render(str(memUse) + '%', True,  memUseColor(memUse)))
         if self.sysInfoShowType.current() == 2:
-            sysText = self.get_cache('sysText_{}'.format(dskStr), lambda: miFont.render(dskStr, True, color_white))
-            sysUseText = self.get_cache('sysUseText_{}'.format(dskUse), lambda: miFont.render(dskUse, True, color_white))
+            sysText = self.get_cache('sysText_{}'.format(dskStr), lambda: miFont.render(dskStr, True, dskUseColor(dskUse)))
+            sysUseText = self.get_cache('sysUseText_{}'.format(str(dskUse)), lambda: miFont.render(str(dskUse), True, dskUseColor(dskUse)))
         rxStr = '' + str(self.RX_RATE) + ' M/s'
         txStr = '' + str(self.TX_RATE) + ' M/s'
-        netSpeedInText = self.get_cache('rxStr_{}'.format(rxStr), lambda: tinyFont.render(rxStr, True, color_green if self.RX_RATE > 0 else color_white))
-        netSpeedOutText = self.get_cache('txStr_{}'.format(txStr), lambda: tinyFont.render(txStr, True, color_green if self.TX_RATE > 0 else color_white))
+        netSpeedInText = self.get_cache('rxStr_{}'.format(rxStr), lambda: tinyFont.render(rxStr, True, netStatsColor(self.RX_RATE)))
+        netSpeedOutText = self.get_cache('txStr_{}'.format(txStr), lambda: tinyFont.render(txStr, True, netStatsColor(self.TX_RATE)))
 
         ip = self.hostIp
         ipText = self.get_cache('ip_{}'.format(ip), lambda: miniFont.render(ip, True, color_white))

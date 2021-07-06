@@ -1,4 +1,4 @@
-<p align="center"><img width="300" src="https://image.haxbk.com/blog/quark-n.jpg"></p>
+<p align="center"><img width="400" src="https://image.haxbk.com/blog/quark-n.jpg"></p>
 <h2 align="center">quark-n-clock</h2>
 
 # quark-n
@@ -11,12 +11,17 @@ quark-n 即（quark-core+Atom-Shield-N）的一些使用说明：[quark-n基础�
 1. 安装ui-clock
    ```bash
    mkdir ~/Git && cd ~/Git
-   git clone -b master https://gitee.com/coolflyreg163/quark-n.git 
-   sh quark-n/WorkSpace/Clock/bin/install.sh
+   git clone -b https://github.com/tannerhu/quark-n-clock.git
+   sh quark-n-clock/WorkSpace/Clock/bin/install.sh
    ```
+   注意两个字体文件比较大  
+   可以在 git clone之后自己行下载将资源放至项目quark-n-clock/WorkSpace/Clock/fonts/目录下以加快安装速度  
+   https://gitee.com/coolflyreg163/quark-n/attach_files/603438/download/STHeiti%20Light.ttc
+   https://gitee.com/coolflyreg163/quark-n/attach_files/603439/download/PingFang.ttc
+   
 2.  卸载ui-clock
    ```bash
-   sh ~/Git/quark-n/WorkSpace/Clock/bin/uninstall.sh
+   sh ~/Git/quark-n-clcok/WorkSpace/Clock/bin/uninstall.sh
    # 要删源码的话执行
    rm -rf ~/Git/quark-n
    ```

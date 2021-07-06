@@ -41,3 +41,56 @@ def cpuUseColor(use):
         if use > 89:
             color = color_red
     return color
+
+def netStatsColor(stats):
+    color = color_white
+    if stats:
+        if 0.5 > stats > 0:
+            color = color_lakeblue
+        if 1 > stats > 0.499:
+            color = color_green
+        if 5 > stats > 0.999:
+            color = color_orange
+        if 10 > stats > 4.999:
+            color = color_peach
+        if stats > 9.999:
+            color = color_red
+    return color
+
+def memUseColor(use):
+    color = color_white
+    if use:
+        if use < 10:
+            color = color_lakeblue
+        if 30 > use > 9.99:
+            color = color_blue
+        if 50 > use > 29.99:
+            color = color_green
+        if 70 > use > 49.99:
+            color = color_pink
+        if 80 > use > 69.99:
+            color = color_orange
+        if 90 > use > 79.99:
+            color = color_peach
+        if use > 89.99:
+            color = color_red
+    return color
+
+def dskUseColor(use):
+    color = color_white
+    if use:
+        if use < 10:
+            color = color_lakeblue
+        if 30 > use > 9.99:
+            color = color_blue
+        if 50 > use > 29.99:
+            color = color_green
+        if 70 > use > 49.99:
+            color = color_pink
+        if 80 > use > 69.99:
+            color = color_orange
+        if 90 > use > 79.99:
+            color = color_peach
+        if use > 89.99:
+            color = color_red
+    return color

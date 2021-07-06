@@ -44,6 +44,5 @@ echo "you entered: $isOK"
 case $isOK in y)
 
 sudo reboot
-done
 
 esac
