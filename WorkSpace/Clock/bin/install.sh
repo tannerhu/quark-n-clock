@@ -14,25 +14,29 @@ ln -s $BASEDIR ~/WorkSpace/
 
 # 脚本添加运行权限并软连到WorkSpace
 chmod +x $PROJECTDIR/WorkSpace/Scripts/start_ui_clock.sh
+chmod +x $BASEDIR/bin/*.sh
 mkdir -p ~/WorkSpace/Scripts/services
 ln -s $PROJECTDIR/WorkSpace/Scripts/services/ui-clock.service ~/WorkSpace/Scripts/services/
 ln -s $PROJECTDIR/WorkSpace/Scripts/start_ui_clock.sh ~/WorkSpace/Scripts/
 
 # 下载2个字体文件：“STHeiti Light.ttc”，“PingFang.ttc”，拷贝到$BASEDIR/fonts
 cd $BASEDIR/fonts
-if [ ! -f "$BASEDIR/fonts/STHeiti%20Light.ttc" ]; then
+if [ ! -f "$BASEDIR/fonts/STHeiti Light.ttc" ]; then
  wget https://gitee.com/coolflyreg163/quark-n/attach_files/603438/download/STHeiti%20Light.ttc
 fi
 if [ ! -f "$BASEDIR/fonts/PingFang.ttc" ]; then
  wget https://gitee.com/coolflyreg163/quark-n/attach_files/603439/download/PingFang.ttc
 fi
 
-# 安装增加服务并开机启动
 cd $BASEDIR
 # 安装依赖
 sudo python -m pip install -r requirements.txt
+# ui-clock服务建立软连接
 sudo ln -s $PROJECTDIR/WorkSpace/Scripts/services/ui-clock.service /lib/systemd/system/
+# 创建日志目录
+mkdir -p ~/WorkSpace/Clock/logs
 sudo systemctl daemon-reload
+# 开机启动
 sudo systemctl enable ui-clock
 
 read -p "Ui-clock installation completed, do you want to restart the system to enable service? [y/n] " isOK
