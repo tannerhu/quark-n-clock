@@ -66,10 +66,8 @@ color_pink = (255,122,189)
 color_orange = (255,88,50)
 
 
-
 color_yellow = (255,255,0)
 color_orange = (255,128,0)
-
 
 
 SIDE_MENU_RECT = pygame.Rect(0, 10, 5, 115)

@@ -3,7 +3,7 @@
 
 cd /home/pi
 
-./WorkSpace/Clock/nohup_start.sh
+./WorkSpace/Clock/bin/nohup_start.sh
 
 
 

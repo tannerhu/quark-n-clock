@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASEDIR=`dirname $0`
+BASEDIR=`cd "$(dirname $0)/.." >/dev/null; pwd`
 echo "work on $BASEDIR"
 cd $BASEDIR
 
