@@ -193,8 +193,8 @@ class ClockUI(BaseUI):
             sysText = self.get_cache('sysText_{}'.format(memStr), lambda: miFont.render(memStr, True, memUseColor(memUse)))
             sysUseText = self.get_cache('sysUseText_{}'.format(str(memUse)), lambda: miFont.render(str(memUse) + '%', True,  memUseColor(memUse)))
         if self.sysInfoShowType.current() == 2:
-            sysText = self.get_cache('sysText_{}'.format(dskStr), lambda: miFont.render(dskStr, True, dskUseColor(dskUse)))
-            sysUseText = self.get_cache('sysUseText_{}'.format(str(dskUse)), lambda: miFont.render(str(dskUse), True, dskUseColor(dskUse)))
+            sysText = self.get_cache('sysText_{}'.format(dskStr), lambda: miFont.render(dskStr, True, dskUseColor(float(dskUse))))
+            sysUseText = self.get_cache('sysUseText_{}'.format(str(dskUse)), lambda: miFont.render(str(dskUse), True, dskUseColor(float(dskUse))))
         rxStr = '' + str(self.RX_RATE) + ' M/s'
         txStr = '' + str(self.TX_RATE) + ' M/s'
         netSpeedInText = self.get_cache('rxStr_{}'.format(rxStr), lambda: tinyFont.render(rxStr, True, netStatsColor(self.RX_RATE)))

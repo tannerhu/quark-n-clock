@@ -21,7 +21,7 @@ quark-n 即（quark-core+Atom-Shield-N）的一些使用说明：[quark-n基础�
    
 2.  卸载ui-clock
    ```bash
-   sh ~/Git/quark-n-clcok/WorkSpace/Clock/bin/uninstall.sh
+   sh ~/Git/quark-n-clock/WorkSpace/Clock/bin/uninstall.sh
    # 要删源码的话执行
    rm -rf ~/Git/quark-n
    ```
